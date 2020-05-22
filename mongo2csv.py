@@ -58,7 +58,6 @@ def dict_parser(document, city_dict=None):
         result['city_curedCount'] = city_dict['curedCount']
         result['city_deadCount'] = city_dict['deadCount']
 
-    # result['updateTime'] = datetime.datetime.fromtimestamp(int(document['updateTime']/1000))
 
     return result
 
@@ -97,8 +96,11 @@ class Listener:
     def listener(self):
         changed_files = list()
         for collection in collections:
+            #打开文件
             json_file = open(
+                #路径拼接
                 os.path.join(
+                    #绝对路径
                     os.path.split(os.path.realpath(__file__))[0], 'json', collection + '.json'),
                 'r', encoding='utf-8'
             )
@@ -117,26 +119,13 @@ class Listener:
                     time.sleep(1)
                     continue
             if static_data != current_data:
-                self.json_dumper(collection=collection, content=current_data)
-                changed_files.append('json/' + collection + '.json')
                 cursor = self.db.dump(collection=collection)
                 self.csv_dumper(collection=collection, cursor=cursor)
                 changed_files.append('csv/' + collection + '.csv')
-                cursor = self.db.dump(collection=collection)
-                self.db_dumper(collection=collection, cursor=cursor)
-                changed_files.append('json/' + collection + '-TimeSeries.json')
             logger.info('{collection} checked!'.format(collection=collection))
-
-    def json_dumper(self, collection, content=None):
-        json_file = open(
-            os.path.join(
-                os.path.split(
-                    os.path.realpath(__file__))[0], 'json', collection + '.json'
-            ),
-            'w', encoding='utf-8'
-        )
-        json.dump(content, json_file, ensure_ascii=False, indent=4)
-        json_file.close()
+            # print(os.path.join(
+            #     os.path.split(os.path.realpath(__file__))[0], 'json', collection + '.json'))
+            # print(os.path.split(os.path.realpath(__file__))[0])
 
     def csv_dumper(self, collection, cursor):
         if collection == 'DXYArea':
@@ -166,23 +155,8 @@ class Listener:
                 index=False, encoding='utf_8_sig', date_format="%Y-%m-%d %H:%M:%S"
             )
 
-    def db_dumper(self, collection, cursor):
-        data = list()
-        for document in cursor:
-            document.pop('_id')
-            data.append(document)
-
-        json_file = open(
-            os.path.join(
-                os.path.split(
-                    os.path.realpath(__file__))[0], 'json', collection + '-TimeSeries.json'
-            ),
-            'w', encoding='utf-8'
-        )
-        json.dump(data, json_file, ensure_ascii=False, indent=4)
-        json_file.close()
-
 
 if __name__ == '__main__':
     listener = Listener()
     listener.run()
+
