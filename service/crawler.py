@@ -40,7 +40,7 @@ class Crawler:
             soup = BeautifulSoup(r.content, 'html.parser')
 
             overall_information = re.search(r'(\{"id".*\})\}', str(soup.find('script', attrs={'id': 'getStatisticsService'})))
-            # print(overall_information)
+
             if overall_information:
                 self.overall_parser(overall_information=overall_information)
 
@@ -52,24 +52,9 @@ class Crawler:
             if abroad_information:
                 self.abroad_parser(abroad_information=abroad_information)
 
-            news_chinese = re.search(r'\[(.*?)\]', str(soup.find('script', attrs={'id': 'getTimelineService1'})))
-            if news_chinese:
-                self.news_parser(news=news_chinese)
-
-            news_english = re.search(r'\[(.*?)\]', str(soup.find('script', attrs={'id': 'getTimelineService2'})))
-            if news_english:
-                self.news_parser(news=news_english)
-
-            rumors = re.search(r'\[(.*?)\]', str(soup.find('script', attrs={'id': 'getIndexRumorList'})))
-            if rumors:
-                self.rumor_parser(rumors=rumors)
-
             if not overall_information or \
                     not area_information or \
-                    not abroad_information or \
-                    not news_chinese or \
-                    not news_english or \
-                    not rumors:
+                    not abroad_information :
                 time.sleep(3)
                 continue
 
@@ -88,7 +73,6 @@ class Crawler:
         print(overall_information)
         if not self.db.find_one(collection='DXYOverall', data=overall_information):
             overall_information['updateTime'] = self.crawl_timestamp
-
             self.db.insert(collection='DXYOverall', data=overall_information)
 
     def area_parser(self, area_information):
@@ -166,26 +150,6 @@ class Crawler:
 
             self.db.insert(collection='DXYArea', data=country)
 
-    def news_parser(self, news):
-        news = json.loads(news.group(0))
-        for _news in news:
-            _news.pop('pubDateStr')
-            if self.db.find_one(collection='DXYNews', data=_news):
-                continue
-            _news['crawlTime'] = self.crawl_timestamp
-
-            self.db.insert(collection='DXYNews', data=_news)
-
-    def rumor_parser(self, rumors):
-        rumors = json.loads(rumors.group(0))
-        for rumor in rumors:
-            rumor.pop('score')
-            rumor['body'] = rumor['body'].replace(' ', '')
-            if self.db.find_one(collection='DXYRumors', data=rumor):
-                continue
-            rumor['crawlTime'] = self.crawl_timestamp
-
-            self.db.insert(collection='DXYRumors', data=rumor)
 
 
 if __name__ == '__main__':
