@@ -119,6 +119,8 @@ class Listener:
                     time.sleep(1)
                     continue
             if static_data != current_data:
+                self.json_dumper(collection=collection, content=current_data)
+                changed_files.append('json/' + collection + '.json')
                 cursor = self.db.dump(collection=collection)
                 self.csv_dumper(collection=collection, cursor=cursor)
                 changed_files.append('csv/' + collection + '.csv')
@@ -126,6 +128,17 @@ class Listener:
             # print(os.path.join(
             #     os.path.split(os.path.realpath(__file__))[0], 'json', collection + '.json'))
             # print(os.path.split(os.path.realpath(__file__))[0])
+
+    def json_dumper(self, collection, content=None):
+        json_file = open(
+            os.path.join(
+                os.path.split(
+                    os.path.realpath(__file__))[0], 'json', collection + '.json'
+            ),
+            'w', encoding='utf-8'
+        )
+        json.dump(content, json_file, ensure_ascii=False, indent=4)
+        json_file.close()
 
     def csv_dumper(self, collection, cursor):
         if collection == 'DXYArea':
