@@ -8,6 +8,7 @@ CORS(app, supports_credentials=True)
 
 from ChinaTrend import ChinaTrend_api
 from WorldTrend import WorldTTrend_api
+from DuiBi import DuiBi_api
 from flask.json import JSONEncoder as _JSONEncoder
 
 class JSONEncoder(_JSONEncoder):
@@ -23,9 +24,11 @@ app.json_encoder = JSONEncoder
 
 app.register_blueprint(ChinaTrend_api)
 app.register_blueprint(WorldTTrend_api)
+app.register_blueprint(DuiBi_api)
 
 if __name__ == "__main__":
     app.run(port=5000)
+
 
 
 
