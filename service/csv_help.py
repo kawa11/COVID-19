@@ -25,7 +25,7 @@ def read():
             del row[39], row[38], row[37], row[36], row[35], row[34], row[33],row[32], row[31], row[30],row[29],row[28],row[27], row[26], row[25], row[24], row[23],row[22], row[21], row[20], row[19],row[6],row[5],row[4],row[3],row[2],row[1],row[0]
             overalldata.append(row)
 
-# 合并数据
+# 合并时间数据
 def merge():
     for i in range(len(data)):
         if i > 0 and data[i][0] == '中国':
