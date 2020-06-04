@@ -132,7 +132,7 @@ for field in result:
                 new_curedCount.append(curedCount[time_all.index(j) - 1])
                 new_deadCount.append(deadCount[time_all.index(j) - 1])
                 break
-            elif (i > j and j == len(time_all) - 1):
+            elif (i > j and j == time_all[-1]):
                 new_confirmedCount.append(confirmedCount[time_all.index(j)])
                 new_curedCount.append(curedCount[time_all.index(j)])
                 new_deadCount.append(deadCount[time_all.index(j)])
@@ -339,10 +339,18 @@ def nnChina():
     l = []
     for i in range(len(QG_confirmedCount)):
         l.append([i, float(QG_confirmedCount[i])])
+    #ndarray数组为int型
     a = np.array(l).astype(np.int)
+    #x轴为天数
     x = a[:, 0]  # get the first column from a
+    #y轴为感染人数
     y = a[:, 1]  ##get the second column from a
+    #x作为样本特征集，y为样本标签
+    #X_train，y_train：得到的训练数据
+    # x_test， y_test：得到的测试数据
+    # x,y：原始数据
     X_train, X_test, y_train, y_test = train_test_split(x, y, test_size=0.3)
+    #返回一个一列的数组
     X_train = X_train.reshape(-1, 1)
     y_train = y_train
     model_mlp = MLPRegressor(
@@ -351,6 +359,7 @@ def nnChina():
         random_state=1, tol=0.0001, verbose=False, warm_start=False, momentum=0.9, nesterovs_momentum=True,
         early_stopping=False, beta_1=0.9, beta_2=0.999, epsilon=1e-08)
     model_mlp.fit(X_train, y_train)
+    #行数自定
     x1 = x.reshape(-1, 1)
     x = x1
     mlp_score = model_mlp.score(x1, y)
@@ -412,3 +421,4 @@ def qgseir():
     response = {"T": T, "S": S, "E": E, "I": I,
                 "R": R}
     return jsonify(response)
+
