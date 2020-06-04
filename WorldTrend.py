@@ -60,8 +60,7 @@ for field in countries:
     deadCount = []
     confirmedCount = []
     new_confirmedCount = []
-    sql = "SELECT ROUND(AVG(province_confirmedCount)),updateTime,ROUND(AVG(province_curedCount)),ROUND(AVG(province_deadCount)) from abroad GROUP BY countryName,updateTime HAVING updateTime in (SELECT DISTINCT(updateTime) from abroad) AND countryName like '%" + \
-          field + "%' ORDER BY updateTime"
+    sql = "SELECT ROUND(AVG(province_confirmedCount)),updateTime,ROUND(AVG(province_curedCount)),ROUND(AVG(province_deadCount)) from abroad GROUP BY countryName,updateTime HAVING updateTime in (SELECT DISTINCT(updateTime) from abroad) AND countryName like '%s' ORDER BY updateTime"%field
     cursor.execute(sql);
     result = cursor.fetchall()
 
@@ -87,8 +86,8 @@ for field in countries:
                 new_curedCount.append(curedCount[time_all.index(j) - 1])
                 new_deadCount.append(deadCount[time_all.index(j) - 1])
                 break
-            elif (i>j and j==len(time_all)-1):
-                new_confirmedCount.append(confirmedCount[j])
+            elif (i>j and j==time_all[-1]):
+                new_confirmedCount.append(confirmedCount[time_all.index(j)])
                 new_curedCount.append(curedCount[time_all.index(j)])
                 new_deadCount.append(deadCount[time_all.index(j)])
                 break
@@ -279,8 +278,3 @@ def getAllcountry():
     result = {"countries": countries, "list": list}
     # print(result)
     return jsonify(result)
-
-
-
-# logisticQQ()
-# getAllcountry()
