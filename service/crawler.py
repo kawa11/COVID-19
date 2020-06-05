@@ -40,7 +40,6 @@ class Crawler:
             soup = BeautifulSoup(r.content, 'html.parser')
 
             overall_information = re.search(r'(\{"id".*\})\}', str(soup.find('script', attrs={'id': 'getStatisticsService'})))
-
             if overall_information:
                 self.overall_parser(overall_information=overall_information)
 
