@@ -97,7 +97,7 @@ class Crawler:
                     try:
                         city['cityEnglishName'] = city_name_map[area['provinceShortName']]['cities'][city['cityName']]
                     except KeyError:
-                        print(area['provinceShortName'], city['cityName'])
+#                         print(area['provinceShortName'], city['cityName'])
                         pass
                 else:
                     city['cityEnglishName'] = 'Area not defined'
