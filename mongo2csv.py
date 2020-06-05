@@ -67,9 +67,6 @@ class DB:
     def __init__(self):
         self.db = db
 
-    def count(self, collection):
-        return self.db[collection].count_documents(filter={})
-
     def dump(self, collection):
         return self.db[collection].aggregate(
             pipeline=[
